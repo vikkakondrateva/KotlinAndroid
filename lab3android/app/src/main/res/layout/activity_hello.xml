@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="35dp"
+    android:background="#FFCFD1">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_gravity="center_vertical">
+
+        <!-- Логотип -->
+        <ImageView
+            android:id="@+id/logoImage"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:src="@drawable/avanew"
+            android:scaleType="centerCrop"
+            android:layout_marginBottom="32dp"/>
+
+        <!-- Поле логина -->
+        <EditText
+            android:id="@+id/loginEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_login"
+            android:textSize="25dp"
+            android:inputType="text"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="#8E5757"
+            android:textColorHint="#8E5757"
+            android:textColor="#1A4B4A" />
+
+        <!-- Поле пароля -->
+        <EditText
+            android:id="@+id/passwordEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_password"
+            android:textSize="25dp"
+            android:inputType="textPassword"
+            android:layout_marginBottom="24dp"
+            android:backgroundTint="#8E5757"
+            android:textColorHint="#8E5757"
+            android:textColor="#1A4B4A"/>
+
+        <!-- Кнопка Вход -->
+        <Button
+            android:id="@+id/loginButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/button_login"
+            android:textSize="20dp"
+            android:background="#399B99"
+            android:textColor="#212631"
+            android:layout_marginBottom="16dp"
+            android:padding="10dp"/>
+
+        <!-- Кнопка Регистрация -->
+        <Button
+            android:id="@+id/registerButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/button_register"
+            android:textSize="20dp"
+            android:background="#399B99"
+            android:textColor="#212631"
+            android:layout_marginBottom="16dp"
+            android:padding="10dp"/>
+
+        <!-- Кнопка Выход -->
+        <Button
+            android:id="@+id/exitButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/button_exit"
+            android:textSize="20dp"
+            android:background="#399B99"
+            android:textColor="#212631"
+            android:padding="10dp"/>
+
+    </LinearLayout>
+</ScrollView>

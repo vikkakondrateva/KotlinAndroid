@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">lab3android</string>
+    <string name="hint_login">Логин</string>
+    <string name="hint_password">Пароль</string>
+    <string name="button_login">Вход</string>
+    <string name="button_register">Регистрация</string>
+    <string name="button_exit">Выход</string>
+
+    <!-- ProfileActivity -->
+    <string name="hint_surname">Фамилия</string>
+    <string name="hint_name">Имя</string>
+    <string name="hint_patronymic">Отчество</string>
+    <string name="hint_birth_date">Дата рождения (дд.мм.гггг)</string>
+    <string name="button_select_avatar">Выбрать аватар</string>
+    <string name="button_register_complete">Зарегистрироваться</string>
+    <string name="gender_male">М</string>
+    <string name="gender_female">Ж</string>
+
+    <!-- MenuActivity -->
+    <string name="button_start">Старт</string>
+    <string name="button_profile">Профиль</string>
+    <string name="button_settings">Настройки</string>
+    <string name="button_report_problem">Сообщить о проблеме</string>
+
+    <!-- SettingsActivity -->
+    <string name="settings_theme_title">Тема приложения</string>
+    <string name="theme_light">Светлая</string>
+    <string name="theme_dark">Темная</string>
+
+    <!-- Log messages -->
+    <string name="log_data_restored">Данные восстановлены</string>
+    <string name="log_data_saved">Данные формы сохранены</string>
+    <string name="log_avatar_button_clicked">Кнопка выбора аватара нажата</string>
+    <string name="log_avatar_clicked">Аватар нажат - открытие выбора изображения</string>
+    <string name="log_registration_data">Регистрация: %1$s %2$s %3$s, Логин: %4$s, Дата: %5$s, Пол: %6$s</string>
+</resources>
