@@ -36,6 +36,15 @@
             android:name=".ProfileActivity"
             android:exported="false" />
 
+        <!-- Администрирование -->
+        <activity
+            android:name=".AdminActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".RegisterActivity"
+            android:exported="false" />
+
 
     </application>
 

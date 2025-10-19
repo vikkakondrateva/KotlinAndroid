@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="35dp"
-    android:background="#FFCFD1">
+    android:background="@color/backgroundColor">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -30,9 +30,9 @@
             android:textSize="25dp"
             android:inputType="text"
             android:layout_marginBottom="16dp"
-            android:backgroundTint="#8E5757"
-            android:textColorHint="#8E5757"
-            android:textColor="#1A4B4A" />
+            android:backgroundTint="@color/backgroundTint"
+            android:textColorHint="@color/backgroundTint"
+            android:textColor="@color/textColorG" />
 
         <!-- Поле пароля -->
         <EditText
@@ -43,9 +43,9 @@
             android:textSize="25dp"
             android:inputType="textPassword"
             android:layout_marginBottom="24dp"
-            android:backgroundTint="#8E5757"
-            android:textColorHint="#8E5757"
-            android:textColor="#1A4B4A"/>
+            android:backgroundTint="@color/backgroundTint"
+            android:textColorHint="@color/backgroundTint"
+            android:textColor="@color/textColorG"/>
 
         <!-- Кнопка Вход -->
         <Button
@@ -54,8 +54,8 @@
             android:layout_height="wrap_content"
             android:text="@string/button_login"
             android:textSize="20dp"
-            android:background="#399B99"
-            android:textColor="#212631"
+            android:background="@color/buttonColor"
+            android:textColor="@color/textColor"
             android:layout_marginBottom="16dp"
             android:padding="10dp"/>
 
@@ -66,8 +66,8 @@
             android:layout_height="wrap_content"
             android:text="@string/button_register"
             android:textSize="20dp"
-            android:background="#399B99"
-            android:textColor="#212631"
+            android:background="@color/buttonColor"
+            android:textColor="@color/textColor"
             android:layout_marginBottom="16dp"
             android:padding="10dp"/>
 
@@ -78,8 +78,8 @@
             android:layout_height="wrap_content"
             android:text="@string/button_exit"
             android:textSize="20dp"
-            android:background="#399B99"
-            android:textColor="#212631"
+            android:background="@color/buttonColor"
+            android:textColor="@color/textColor"
             android:padding="10dp"/>
 
     </LinearLayout>

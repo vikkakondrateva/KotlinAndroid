@@ -16,7 +16,7 @@
             android:id="@+id/avatarImage"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:src="@android:drawable/ic_menu_gallery"
+            android:src="@drawable/avatar_default"
             android:background="@color/buttonColor"
             android:scaleType="centerCrop"
             android:layout_marginBottom="16dp"/>
@@ -42,7 +42,7 @@
             android:layout_marginBottom="16dp"
             android:backgroundTint="@color/backgroundTint"
             android:textColorHint="@color/backgroundTint"
-            android:textColor="@color/textColorG"/>
+            android:textColor="#1A4B4A"/>
 
         <EditText
             android:id="@+id/passwordEditText"
@@ -54,7 +54,7 @@
             android:textSize="20dp"
             android:backgroundTint="@color/backgroundTint"
             android:textColorHint="@color/backgroundTint"
-            android:textColor="@color/textColorG"/>
+            android:textColor="#1A4B4A"/>
 
         <EditText
             android:id="@+id/SurnameEditText"
@@ -66,7 +66,7 @@
             android:textSize="20dp"
             android:backgroundTint="@color/backgroundTint"
             android:textColorHint="@color/backgroundTint"
-            android:textColor="@color/textColorG"/>
+            android:textColor="#1A4B4A"/>
 
         <EditText
             android:id="@+id/NameEditText"
@@ -78,7 +78,7 @@
             android:textSize="20dp"
             android:backgroundTint="@color/backgroundTint"
             android:textColorHint="@color/backgroundTint"
-            android:textColor="@color/textColorG"/>
+            android:textColor="#1A4B4A"/>
 
         <EditText
             android:id="@+id/PatronymicEditText"
@@ -90,7 +90,7 @@
             android:textSize="20dp"
             android:backgroundTint="@color/backgroundTint"
             android:textColorHint="@color/backgroundTint"
-            android:textColor="@color/textColorG"/>
+            android:textColor="#1A4B4A"/>
 
         <EditText
             android:id="@+id/birthDateEditText"
@@ -102,7 +102,7 @@
             android:textSize="20dp"
             android:backgroundTint="@color/backgroundTint"
             android:textColorHint="@color/backgroundTint"
-            android:textColor="@color/textColorG"/>
+            android:textColor="#1A4B4A"/>
 
         <RadioGroup
             android:id="@+id/genderRadioGroup"
@@ -130,22 +130,12 @@
                 android:text="@string/gender_female"/>
         </RadioGroup>
 
-        <Button
-            android:id="@+id/makeAdminButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Сделать администратором"
-            android:textSize="20dp"
-            android:background="@color/buttonColor"
-            android:textColor="@color/textColor"
-            android:layout_marginBottom="16dp"
-            android:visibility="gone"/>
 
         <Button
             android:id="@+id/registerButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Сохранить"
+            android:text="@string/button_register_complete"
             android:textSize="20dp"
             android:background="@color/buttonColor"
             android:textColor="@color/textColor"/>

@@ -1,7 +1,12 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+    <!-- Базовая тема приложения (тёмная) -->
     <style name="Base.Theme.Lab3android" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <!-- Тёмные цвета -->
+        <item name="colorPrimary">@color/buttonColor</item>
+        <item name="colorOnPrimary">@color/textColor</item>
+        <item name="android:textColor">@color/textColor</item>
+        <item name="colorSecondary">@color/buttonColor</item>
     </style>
+
+    <style name="Theme.Lab3android" parent="Base.Theme.Lab3android" />
 </resources>

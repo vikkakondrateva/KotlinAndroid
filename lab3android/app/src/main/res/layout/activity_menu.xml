@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="25dp"
-    android:background="#FFCFD1"
+    android:background="@color/backgroundColor"
     android:gravity="center">
 
     <TextView
@@ -14,7 +14,7 @@
 
         android:textSize="25sp"
         android:textStyle="bold"
-        android:textColor="#212631"
+        android:textColor="@color/textColor"
         android:layout_marginBottom="30dp"/>
 
     <Button
@@ -23,8 +23,8 @@
         android:layout_height="wrap_content"
         android:text="Старт"
         android:textSize="20dp"
-        android:background="#399B99"
-        android:textColor="#212631"
+        android:background="@color/buttonColor"
+        android:textColor="@color/textColor"
         android:layout_marginBottom="16dp"
         android:padding="10dp"/>
 
@@ -34,8 +34,8 @@
         android:layout_height="wrap_content"
         android:text="Профиль"
         android:textSize="20dp"
-        android:background="#399B99"
-        android:textColor="#212631"
+        android:background="@color/buttonColor"
+        android:textColor="@color/textColor"
         android:layout_marginBottom="16dp"
         android:padding="10dp"/>
 
@@ -45,10 +45,22 @@
         android:layout_height="wrap_content"
         android:text="Настройки"
         android:textSize="20dp"
-        android:background="#399B99"
-        android:textColor="#212631"
+        android:background="@color/buttonColor"
+        android:textColor="@color/textColor"
         android:layout_marginBottom="16dp"
         android:padding="10dp"/>
+
+    <Button
+        android:id="@+id/adminButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Администрирование"
+        android:textSize="20dp"
+        android:background="@color/buttonColor"
+        android:textColor="@color/textColor"
+        android:layout_marginBottom="16dp"
+        android:padding="10dp"
+        android:visibility="gone"/>
 
     <Button
         android:id="@+id/reportProblemButton"
@@ -56,8 +68,8 @@
         android:layout_height="wrap_content"
         android:text="Сообщить о проблеме"
         android:textSize="20dp"
-        android:background="#399B99"
-        android:textColor="#212631"
+        android:background="@color/buttonColor"
+        android:textColor="@color/textColor"
         android:layout_marginBottom="16dp"
         android:padding="10dp"/>
 
@@ -67,8 +79,8 @@
         android:layout_height="wrap_content"
         android:text="Выход"
         android:textSize="20dp"
-        android:background="#399B99"
-        android:textColor="#212631"
+        android:background="@color/buttonColor"
+        android:textColor="@color/textColor"
         android:padding="10dp"/>
 
 </LinearLayout>
