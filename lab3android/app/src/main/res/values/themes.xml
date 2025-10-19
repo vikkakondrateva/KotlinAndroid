@@ -1,8 +1,10 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+    <!-- Базовая тема приложения (светлая) -->
     <style name="Base.Theme.Lab3android" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <!-- Светлые цвета -->
+        <item name="colorPrimary">@color/buttonColor</item>
+        <item name="colorOnPrimary">@color/textColor</item>
+        <item name="android:textColor">@color/textColor</item>
     </style>
 
     <style name="Theme.Lab3android" parent="Base.Theme.Lab3android" />

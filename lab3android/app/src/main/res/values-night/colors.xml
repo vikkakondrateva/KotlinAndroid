@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Тёмная тема -->
+    <color name="backgroundColor">#383C4F</color>
+    <color name="textColor">#FF9898</color>
+    <color name="textColorL">#E8497C</color>
+    <color name="textColorG">#FF9898</color>
+    <color name="textColorAdm">#383C4F</color>
+    <color name="backgroundAdm">#FFCFD1</color>
+    <color name="buttonColor">#4E536E</color>
+    <color name="backgroundTint">#E8497C</color>
+    <color name="itemBackgroundColor">#4E536E</color>
+</resources>

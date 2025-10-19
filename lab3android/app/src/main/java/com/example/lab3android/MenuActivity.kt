@@ -7,29 +7,54 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 
-class MenuActivity : Activity(){
+class MenuActivity : AppCompatActivity() {
 
+    private lateinit var adminButton: Button
+    private lateinit var loginName: TextView
+    private lateinit var database: Database  // Объявляем переменную
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeUtils.applySavedTheme(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_menu)
         Log.d("Lifecycle", "MenuActivity - onCreate")
+
+        // ИНИЦИАЛИЗИРУЕМ БАЗУ ДАННЫХ
+        database = Database(this)  // Вот эта строка была пропущена!
 
         val startButton = findViewById<Button>(R.id.startButton)
         val profileButton = findViewById<Button>(R.id.profileButton)
         val settingsButton = findViewById<Button>(R.id.settingsButton)
         val reportProblemButton = findViewById<Button>(R.id.reportProblemButton)
         val exitButton = findViewById<Button>(R.id.exitButton)
+        adminButton = findViewById<Button>(R.id.adminButton)
+        loginName = findViewById<TextView>(R.id.loginName)
 
-        val loginName = findViewById<TextView>(R.id.loginName)
-        val recievedLogin = intent.getStringExtra("lоginkey")
+        // Получаем данные пользователя
+        val userLogin = intent.getStringExtra("user_login")
+        val userName = intent.getStringExtra("user_name")
+        val isAdmin = intent.getBooleanExtra("is_admin", false)
 
-        Log.d("HelloActivity", "Приняли $recievedLogin")
-        loginName.setText(recievedLogin)
-        //val recievedLogin = intent.extras?.getString("loginkey")
+        Log.d("MenuActivity", "Пользователь: $userLogin, Админ: $isAdmin")
 
-        //val recievedLogin = intent.getStringExtra("loginkey")
+        // Отображаем имя пользователя
+        if (!userName.isNullOrEmpty()) {
+            loginName.text = "Добро пожаловать,\n$userName!"
+        } else if (!userLogin.isNullOrEmpty()) {
+            loginName.text = "Добро пожаловать,\n$userLogin!"
+        }
+
+        // Показываем кнопку администрирования только администраторам
+        if (isAdmin) {
+            adminButton.visibility = android.view.View.VISIBLE
+            Log.d("MenuActivity", "Пользователь является администратором")
+        } else {
+            adminButton.visibility = android.view.View.GONE
+            Log.d("MenuActivity", "Пользователь обычный")
+        }
 
         // Старт (лог)
         startButton.setOnClickListener {
@@ -38,7 +63,32 @@ class MenuActivity : Activity(){
 
         // Профиль - ProfileActivity
         profileButton.setOnClickListener {
-            val intent = Intent(this, ProfileActivity::class.java)
+            Log.d("MenuActivity", "Кнопка Профиль нажата")
+
+            // Получаем логин текущего пользователя
+            val userLogin = intent.getStringExtra("user_login")
+            if (!userLogin.isNullOrEmpty()) {
+                // Находим пользователя по логину чтобы получить его ID
+                val currentUser = database.getUserByLogin(userLogin)
+
+                val profileIntent = Intent(this, ProfileActivity::class.java)
+                if (currentUser != null) {
+                    profileIntent.putExtra("user_id", currentUser.id)
+                    Log.d("MenuActivity", "Передаем ID пользователя: ${currentUser.id}")
+                    startActivity(profileIntent)
+                } else {
+                    Log.e("MenuActivity", "Не удалось найти пользователя с логином: $userLogin")
+                    Toast.makeText(this, "Ошибка: не найден пользователь в БД", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(this, "Ошибка: не найден текущий пользователь", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        // Администрирование - AdminActivity
+        adminButton.setOnClickListener {
+            Log.d("Menu", "Кнопка Администрирование нажата")
+            val intent = Intent(this, AdminActivity::class.java)
             startActivity(intent)
         }
 
@@ -67,11 +117,9 @@ class MenuActivity : Activity(){
             putExtra(Intent.EXTRA_TEXT, "Спасите, помогите!!! У меня проблемки(((")
         }
 
-        // Пытаемся открыть почтовое приложение
         if (intent.resolveActivity(packageManager) != null) {
             startActivity(intent)
         } else {
-            // Если нет почты - предлагаем позвонить
             val callIntent = Intent(Intent.ACTION_DIAL).apply {
                 data = Uri.parse("tel:+79513576242")
             }
@@ -82,5 +130,4 @@ class MenuActivity : Activity(){
             }
         }
     }
-
 }

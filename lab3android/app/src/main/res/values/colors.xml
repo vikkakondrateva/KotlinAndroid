@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <!-- Светлая тема -->
+    <color name="backgroundColor">#FFCFD1</color>
+    <color name="textColor">#212631</color>
+    <color name="textColorL">#7B5661</color>
+    <color name="textColorG">#1A4B4A</color>
+    <color name="textColorAdm">#1A4B4A</color>
+    <color name="backgroundAdm">#AAD7D7</color>
+    <color name="buttonColor">#399B99</color>
+    <color name="backgroundTint">#8E5757</color>
+    <color name="itemBackgroundColor">#FFEAEB</color>
+
 </resources>
