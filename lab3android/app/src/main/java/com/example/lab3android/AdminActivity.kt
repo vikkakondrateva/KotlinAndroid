@@ -4,41 +4,39 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.Button
 import android.widget.Toast
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager // Менеджер компоновки для линейного списка
+import androidx.recyclerview.widget.RecyclerView        // Компонент для отображения прокручиваемых списков
+import androidx.appcompat.app.AppCompatActivity         // Базовый класс активности с поддержкой старых версий
+import com.example.lab3android.databinding.ActivityAdminBinding
 
 class AdminActivity : AppCompatActivity() {
 
-    private lateinit var usersRecyclerView: RecyclerView
-    private lateinit var backButton: Button
+    private lateinit var binding: ActivityAdminBinding
+    //private lateinit var usersRecyclerView: RecyclerView    // Список пользователей
+    //private lateinit var backButton: Button
     private lateinit var userAdapter: UserAdapter
     private lateinit var database: Database
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        ThemeUtils.applySavedTheme(this)
+        ThemeUtils.applySavedTheme(this)    // Применение сохраненной темы перед созданием активности
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_admin)
+        binding = ActivityAdminBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         Log.d("Lifecycle", "AdminActivity - onCreate")
 
         database = Database(this)
-        // Проверка базы данных
-        val userCount = database.getUsersCount()
+        val userCount = database.getUsersCount()    // Получение количества пользователей в базе данных
         Log.d("AdminActivity", "В базе данных пользователей: $userCount")
 
-        initializeViews()
-        setupRecyclerView()
-        loadUsers()
+        initializeViews()       // Инициализация View элементов
+        setupRecyclerView()     // Настройка списка пользоватеоей
+        loadUsers()              // Загрузка пользователей из базы данных
     }
 
     private fun initializeViews() {
-        usersRecyclerView = findViewById(R.id.usersRecyclerView)
-        backButton = findViewById(R.id.backButton)
-
-        backButton.setOnClickListener {
+        binding.backButton.setOnClickListener {
             Log.d("AdminActivity", "Кнопка Назад нажата")
             finish()
         }
@@ -47,7 +45,7 @@ class AdminActivity : AppCompatActivity() {
     private fun setupRecyclerView() {
         userAdapter = UserAdapter()
 
-        // Устанавливаем слушатель кликов
+        // Устанавливаем слушатель кликов на элементы списка
         userAdapter.setOnUserClickListener(object : UserAdapter.OnUserClickListener {
             override fun onUserClick(user: User) {
                 // Клик на пользователе - открываем его профиль
@@ -55,10 +53,9 @@ class AdminActivity : AppCompatActivity() {
             }
         })
 
-        usersRecyclerView.apply {
+        binding.usersRecyclerView.apply {
             layoutManager = LinearLayoutManager(this@AdminActivity)
             adapter = userAdapter
-            // Добавляем разделитель между элементами
             addItemDecoration(androidx.recyclerview.widget.DividerItemDecoration(
                 this@AdminActivity, LinearLayoutManager.VERTICAL
             ))
@@ -66,25 +63,22 @@ class AdminActivity : AppCompatActivity() {
     }
 
     private fun loadUsers() {
-        val users = database.getAllUsers()
-        Log.d("AdminActivity", "Загружено пользователей: ${users.size}")
+        Thread {
+            val users = database.getAllUsers()      // ← Теперь в фоновом потоке!
+            Log.d("AdminActivity", "Загружено пользователей: ${users.size}")
 
-        // Детальная информация о каждом пользователе
-        users.forEach { user ->
-            Log.d("AdminActivity", "Пользователь: ${user.login}, ${user.firstName} ${user.lastName}, Админ: ${user.isAdmin}")
-        }
+            runOnUiThread {
+                if (users.isEmpty()) {
+                    Toast.makeText(this, "Нет зарегистрированных пользователей", Toast.LENGTH_SHORT).show()
+                    Log.d("AdminActivity", "БД пуста - пользователей нет")
+                } else {
+                    Toast.makeText(this, "Загружено пользователей: ${users.size}", Toast.LENGTH_SHORT).show()
+                }
 
-        if (users.isEmpty()) {
-            Toast.makeText(this, "Нет зарегистрированных пользователей", Toast.LENGTH_SHORT).show()
-            Log.d("AdminActivity", "БД пуста - пользователей нет")
-        } else {
-            Toast.makeText(this, "Загружено пользователей: ${users.size}", Toast.LENGTH_SHORT).show()
-        }
-
-        userAdapter.setUsers(users)
-
-        // Проверяем, что адаптер обновился
-        Log.d("AdminActivity", "Адаптер содержит: ${userAdapter.itemCount} элементов")
+                userAdapter.setUsers(users)  // ← Теперь в UI потоке!
+                Log.d("AdminActivity", "Адаптер содержит: ${userAdapter.itemCount} элементов")
+            }
+        }.start()
     }
 
     private fun openUserProfile(user: User) {
@@ -95,25 +89,14 @@ class AdminActivity : AppCompatActivity() {
         startActivityForResult(intent, 1) // Используем startActivityForResult для обновления списка
     }
 
-    // Добавьте метод для обработки результата
+    // Метод для обработки результата от дочерней активности
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+        super.onActivityResult(requestCode, resultCode, data)        // Вызов родительского метода
         if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
             // Обновляем список пользователей после редактирования
             loadUsers()
             Toast.makeText(this, "Данные пользователя обновлены", Toast.LENGTH_SHORT).show()
         }
-    }
-
-    private fun showUserActionsMenu(user: User, view: View) {
-        Log.d("AdminActivity", "Показываем меню действий для: ${user.login}")
-
-        // TODO: Реализовать PopupMenu с действиями
-        // - Сделать администратором
-        // - Заблокировать
-        // - Удалить
-
-        Toast.makeText(this, "Меню действий для: ${user.login}", Toast.LENGTH_SHORT).show()
     }
 
     override fun onStart() {
@@ -123,6 +106,7 @@ class AdminActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        // Повторное применение темы на случай изменений
         ThemeUtils.applySavedTheme(this)
         delegate.applyDayNight()
         Log.d("Lifecycle", "AdminActivity - onResume")

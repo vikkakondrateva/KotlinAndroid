@@ -1,9 +1,9 @@
 package com.example.lab3android
 
-import android.content.ContentValues
-import android.content.Context
-import android.database.sqlite.SQLiteDatabase
-import android.database.sqlite.SQLiteOpenHelper
+import android.content.ContentValues    // Класс для хранения набора значений (ключ-значение) для вставки/обновления в БД
+import android.content.Context          // Класс предоставляет доступ к ресурсам приложения, БД, файлам
+import android.database.sqlite.SQLiteDatabase    // Класс для работы с SQLite базой данных (запросы, транзакции)
+import android.database.sqlite.SQLiteOpenHelper  // Базовый класс для управления созданием и версиями БД
 import android.util.Log
 
 class Database(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
@@ -39,15 +39,16 @@ class Database(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
                 $COLUMN_MIDDLE_NAME TEXT,
                 $COLUMN_BIRTH_DATE TEXT NOT NULL,
                 $COLUMN_GENDER TEXT NOT NULL,
-                $COLUMN_IS_ADMIN INTEGER DEFAULT 0
+                $COLUMN_IS_ADMIN INTEGER DEFAULT 0,
                 $COLUMN_THEME TEXT DEFAULT 'light'
-            )
+            );
         """.trimIndent()
         db.execSQL(createTable)
     }
 
+    // Метод вызывается при обновлении версии базы данных
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        if (oldVersion < 2) {
+        if (oldVersion < 2) {   // Проверяем, если старая версия меньше 2 (добавлена колонка theme в версии 2)
             try {
                 db.execSQL("ALTER TABLE $TABLE_USERS ADD COLUMN $COLUMN_THEME TEXT DEFAULT 'light'") // 🔹 NEW
                 Log.d("DATABASE", "Добавлена колонка theme в таблицу users")
@@ -57,33 +58,34 @@ class Database(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         }
     }
 
-    // МЕТОД ДЛЯ ПОДСЧЕТА ПОЛЬЗОВАТЕЛЕЙ
+    // Метод для подсчета пользователей
     fun getUsersCount(): Int {
-        val db = this.readableDatabase
+        val db = this.readableDatabase   // Получаем объект базы данных для чтения
         val query = "SELECT COUNT(*) FROM $TABLE_USERS"
-        val cursor = db.rawQuery(query, null)
+        val cursor = db.rawQuery(query, null)    // Выполнение запроса и получение Cursor для доступа к результатам
 
-        val count = if (cursor.moveToFirst()) {
-            cursor.getInt(0)
+        // Получение количества пользователей из Cursor
+        val count = if (cursor.moveToFirst()) { // Перемещаем Cursor на первую запись
+            cursor.getInt(0)        // Получаем значение из первой колонки (COUNT(*))
         } else {
             0
         }
-        cursor.close()
+        cursor.close()                           // Всегда закрываем Cursor после использования для освобождения ресурсов
 
         Log.d("DATABASE", "Текущее количество пользователей в БД: $count")
         return count
     }
 
-    // ПОЛУЧЕНИЕ ВСЕХ ПОЛЬЗОВАТЕЛЕЙ
+    // Возвращ список всех пользователей
     fun getAllUsers(): List<User> {
-        val userList = mutableListOf<User>()
-        val db = this.readableDatabase
-        val query = "SELECT * FROM $TABLE_USERS ORDER BY $COLUMN_LAST_NAME, $COLUMN_FIRST_NAME"
-        val cursor = db.rawQuery(query, null)
+        val userList = mutableListOf<User>()     // Создаем изменяемый список для хранения пользователей
+        val db = this.readableDatabase           // Получаем объект базы данных для чтения
+        val query = "SELECT * FROM $TABLE_USERS ORDER BY $COLUMN_LAST_NAME, $COLUMN_FIRST_NAME"     // SQL запрос для получения всех пользователей с сортировкой по фамилии и имени
+        val cursor = db.rawQuery(query, null)       // Выполнение запроса
 
         if (cursor.moveToFirst()) {
             do {
-                val user = User(
+                val user = User(        // Создаем объект User из данных текущей записи Cursor
                     id = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_ID)),
                     avatarPath = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_AVATAR_PATH)),
                     login = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_LOGIN)),
@@ -95,8 +97,8 @@ class Database(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
                     gender = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_GENDER)),
                     isAdmin = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_IS_ADMIN)) == 1
                 )
-                userList.add(user)
-            } while (cursor.moveToNext())
+                userList.add(user)       // Добавляем пользователя в список
+            } while (cursor.moveToNext())    // Переходим к следующей записи, пока они есть
         }
         cursor.close()
 
@@ -117,7 +119,7 @@ class Database(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
     ): Boolean {
         val db = this.writableDatabase
 
-        // ПРОВЕРЯЕМ, ПЕРВЫЙ ЛИ ЭТО ПОЛЬЗОВАТЕЛЬ
+        // Проверяем, первый ли это пользователь
         val isFirstUser = getUsersCount() == 0
 
         val values = ContentValues().apply {
@@ -130,14 +132,15 @@ class Database(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
             put(COLUMN_GENDER, gender)
             put(COLUMN_AVATAR_PATH, avatarPath)
 
-            // ЕСЛИ ПЕРВЫЙ ПОЛЬЗОВАТЕЛЬ - ДЕЛАЕМ АДМИНИСТРАТОРОМ
+            // Если это первый пользователь - делаем админом
             put(COLUMN_IS_ADMIN, if (isFirstUser) 1 else 0)
         }
 
         return try {
+            // Вставляем данные в таблицу и получаем ID новой записи
             val result = db.insert(TABLE_USERS, null, values)
 
-            // ЛОГИРУЕМ ДЛЯ ПРОВЕРКИ
+            // Проверка
             if (result != -1L) {
                 if (isFirstUser) {
                     Log.d("DATABASE", "Первый пользователь $login зарегистрирован как АДМИНИСТРАТОР")
@@ -146,6 +149,7 @@ class Database(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
                 }
             }
 
+            // Возвращаем true если вставка успешна (result != -1), иначе false
             result != -1L
         } catch (e: Exception) {
             Log.e("DATABASE", "Ошибка регистрации пользователя: ${e.message}")
@@ -156,14 +160,12 @@ class Database(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
     // Проверка существования логина
     fun isLoginExists(login: String): Boolean {
         val db = this.readableDatabase
-        val query = "SELECT * FROM $TABLE_USERS WHERE $COLUMN_LOGIN = ?"
-        val cursor = db.rawQuery(query, arrayOf(login))
+        val query = "SELECT * FROM $TABLE_USERS WHERE $COLUMN_LOGIN = ?"     // SQL запрос для поиска пользователя с указанным логином
+        val cursor = db.rawQuery(query, arrayOf(login))     // Задали параметр login вместо ?
         val exists = cursor.count > 0
         cursor.close()
         return exists
     }
-
-    // Добавьте этот метод в класс Database
 
     fun updateUser(
         userId: Long,
@@ -177,9 +179,9 @@ class Database(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         avatarPath: String? = null,
         isAdmin: Boolean = false
     ): Boolean {
-        val db = this.writableDatabase
+        val db = this.writableDatabase      // Получаем объект базы данных для записи
 
-        val values = ContentValues().apply {
+        val values = ContentValues().apply {        // Создаем ContentValues с новыми данными пользователя
             put(COLUMN_LOGIN, login)
             put(COLUMN_PASSWORD, password)
             put(COLUMN_LAST_NAME, lastName)
@@ -192,8 +194,10 @@ class Database(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         }
 
         return try {
+            // Обновляем запись пользователя по ID
             val result = db.update(TABLE_USERS, values, "$COLUMN_ID = ?", arrayOf(userId.toString()))
             Log.d("DATABASE", "Пользователь $userId обновлен. Результат: $result")
+            // Возвращаем true если обновлена хотя бы одна запись
             result > 0
         } catch (e: Exception) {
             Log.e("DATABASE", "Ошибка обновления пользователя: ${e.message}")
@@ -204,11 +208,12 @@ class Database(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
     // Метод для получения пользователя по ID
     fun getUserById(userId: Long): User? {
         val db = this.readableDatabase
-        val query = "SELECT * FROM $TABLE_USERS WHERE $COLUMN_ID = ?"
+        val query = "SELECT * FROM $TABLE_USERS WHERE $COLUMN_ID = ?"       // SQL запрос для поиска пользователя по ID
         val cursor = db.rawQuery(query, arrayOf(userId.toString()))
 
+        // Проверяем, найден ли пользователь
         return if (cursor.moveToFirst()) {
-            val user = User(
+            val user = User(        // Создаем объект User из данных Cursor
                 id = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_ID)),
                 avatarPath = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_AVATAR_PATH)),
                 login = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_LOGIN)),
@@ -221,7 +226,7 @@ class Database(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
                 isAdmin = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_IS_ADMIN)) == 1
             )
             cursor.close()
-            user
+            user                    // Возвращаем найденного пользователя
         } else {
             cursor.close()
             null
@@ -259,11 +264,13 @@ class Database(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
     // Получение пользователя по логину и паролю
     fun getUser(login: String, password: String): User? {
         val db = this.readableDatabase
+        // SQL запрос для поиска пользователя по логину И паролю
         val query = "SELECT * FROM $TABLE_USERS WHERE $COLUMN_LOGIN = ? AND $COLUMN_PASSWORD = ?"
         val cursor = db.rawQuery(query, arrayOf(login, password))
 
+        // Проверяем, найден ли пользователь
         return if (cursor.moveToFirst()) {
-            val user = User(
+            val user = User(            // Создаем объект User из данных Cursor
                 id = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_ID)),
                 avatarPath = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_AVATAR_PATH)),
                 login = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_LOGIN)),
@@ -286,10 +293,11 @@ class Database(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
     // Получить тему пользователя
     fun getUserTheme(login: String): String {
         val db = readableDatabase
+        // SQL запрос для получения темы пользователя
         val cursor = db.rawQuery("SELECT theme FROM users WHERE login = ?", arrayOf(login))
         var theme = "light"
-        if (cursor.moveToFirst()) {
-            theme = cursor.getString(0)
+        if (cursor.moveToFirst()) {      // Проверяем, есть ли результат
+            theme = cursor.getString(0)      // Получаем тему из первой колонки результата
         }
         cursor.close()
         return theme
@@ -298,34 +306,10 @@ class Database(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
     // Сохранить тему пользователя
     fun setUserTheme(login: String, theme: String) {
         val db = writableDatabase
-        val values = ContentValues()
-        values.put("theme", theme)
+        val values = ContentValues()         // Создаем ContentValues с новой темой
+        values.put("theme", theme)           // Добавляем тему
+
+        // Обновляем запись пользователя
         db.update("users", values, "login = ?", arrayOf(login))
-    }
-
-
-    // Удалить всех пользователей
-    fun deleteAllUsers(): Boolean {
-        val db = this.writableDatabase
-        return try {
-            db.delete(TABLE_USERS, null, null) > 0
-        } catch (e: Exception) {
-            false
-        }
-    }
-
-    fun getUserAvatar(userId: Long): ByteArray? {
-        val db = this.readableDatabase
-        val query = "SELECT $COLUMN_AVATAR_PATH FROM $TABLE_USERS WHERE $COLUMN_ID = ?"
-        val cursor = db.rawQuery(query, arrayOf(userId.toString()))
-
-        return if (cursor.moveToFirst()) {
-            val avatarBlob = cursor.getBlob(cursor.getColumnIndexOrThrow(COLUMN_AVATAR_PATH))
-            cursor.close()
-            if (avatarBlob != null && avatarBlob.isNotEmpty()) avatarBlob else null
-        } else {
-            cursor.close()
-            null
-        }
     }
 }

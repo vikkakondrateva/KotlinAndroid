@@ -72,13 +72,13 @@
             android:id="@+id/NameEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="@color/backgroundTint"
             android:hint="@string/hint_name"
             android:inputType="text"
-            android:layout_marginBottom="16dp"
-            android:textSize="20dp"
-            android:backgroundTint="@color/backgroundTint"
+            android:textColor="@color/textColorG"
             android:textColorHint="@color/backgroundTint"
-            android:textColor="@color/textColorG"/>
+            android:textSize="20dp" />
 
         <EditText
             android:id="@+id/PatronymicEditText"
@@ -145,7 +145,7 @@
             android:id="@+id/registerButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Сохранить"
+            android:text="Сохранить изменения"
             android:textSize="20dp"
             android:background="@color/buttonColor"
             android:textColor="@color/textColor"/>

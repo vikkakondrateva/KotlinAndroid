@@ -42,7 +42,7 @@
             android:layout_marginBottom="16dp"
             android:backgroundTint="@color/backgroundTint"
             android:textColorHint="@color/backgroundTint"
-            android:textColor="#1A4B4A"/>
+            android:textColor="@color/textColorG"/>
 
         <EditText
             android:id="@+id/passwordEditText"
@@ -54,7 +54,7 @@
             android:textSize="20dp"
             android:backgroundTint="@color/backgroundTint"
             android:textColorHint="@color/backgroundTint"
-            android:textColor="#1A4B4A"/>
+            android:textColor="@color/textColorG"/>
 
         <EditText
             android:id="@+id/SurnameEditText"
@@ -66,7 +66,7 @@
             android:textSize="20dp"
             android:backgroundTint="@color/backgroundTint"
             android:textColorHint="@color/backgroundTint"
-            android:textColor="#1A4B4A"/>
+            android:textColor="@color/textColorG"/>
 
         <EditText
             android:id="@+id/NameEditText"
@@ -78,7 +78,7 @@
             android:textSize="20dp"
             android:backgroundTint="@color/backgroundTint"
             android:textColorHint="@color/backgroundTint"
-            android:textColor="#1A4B4A"/>
+            android:textColor="@color/textColorG"/>
 
         <EditText
             android:id="@+id/PatronymicEditText"
@@ -90,7 +90,7 @@
             android:textSize="20dp"
             android:backgroundTint="@color/backgroundTint"
             android:textColorHint="@color/backgroundTint"
-            android:textColor="#1A4B4A"/>
+            android:textColor="@color/textColorG"/>
 
         <EditText
             android:id="@+id/birthDateEditText"
@@ -102,7 +102,7 @@
             android:textSize="20dp"
             android:backgroundTint="@color/backgroundTint"
             android:textColorHint="@color/backgroundTint"
-            android:textColor="#1A4B4A"/>
+            android:textColor="@color/textColorG"/>
 
         <RadioGroup
             android:id="@+id/genderRadioGroup"

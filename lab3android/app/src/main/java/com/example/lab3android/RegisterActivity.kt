@@ -1,11 +1,7 @@
 package com.example.lab3android
 
-import android.app.Activity
 import android.app.AlertDialog
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -14,23 +10,26 @@ import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.lab3android.databinding.ActivityRegisterBinding
 
 class RegisterActivity : AppCompatActivity() {
 
-    private lateinit var database: Database
+
 
     // Поля ввода (соответствуют твоим id из XML)
-    private lateinit var loginEditText: EditText
-    private lateinit var passwordEditText: EditText
-    private lateinit var surnameEditText: EditText  // SurnameEditText
-    private lateinit var nameEditText: EditText     // NameEditText
-    private lateinit var patronymicEditText: EditText // PatronymicEditText
-    private lateinit var birthDateEditText: EditText
-    private lateinit var genderRadioGroup: RadioGroup
-    private lateinit var registerButton: Button
-    private lateinit var avatarImage: ImageView
-    private lateinit var selectAvatarButton: Button
+    //private lateinit var loginEditText: EditText
+    //private lateinit var passwordEditText: EditText
+    //private lateinit var surnameEditText: EditText  // SurnameEditText
+    //private lateinit var nameEditText: EditText     // NameEditText
+    //private lateinit var patronymicEditText: EditText // PatronymicEditText
+    //private lateinit var birthDateEditText: EditText
+    //private lateinit var genderRadioGroup: RadioGroup
+    //private lateinit var registerButton: Button
+    //private lateinit var avatarImage: ImageView
+    //private lateinit var selectAvatarButton: Button
+    private lateinit var binding: ActivityRegisterBinding
     private var selectedAvatarResId: Int = R.drawable.avatar_default
+    private lateinit var database: Database
 
     private val availableAvatars = listOf(
         R.drawable.avatar1,
@@ -45,34 +44,36 @@ class RegisterActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeUtils.applySavedTheme(this)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_register)
+        binding = ActivityRegisterBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        //setContentView(R.layout.activity_register)
 
         database = Database(this)
 
         // Находим все элементы на экране (по твоим id)
-        loginEditText = findViewById(R.id.loginEditText)
-        passwordEditText = findViewById(R.id.passwordEditText)
-        surnameEditText = findViewById(R.id.SurnameEditText)      // Обрати внимание на большую S
-        nameEditText = findViewById(R.id.NameEditText)            // Обрати внимание на большую N
-        patronymicEditText = findViewById(R.id.PatronymicEditText) // Обрати внимание на большую P
-        birthDateEditText = findViewById(R.id.birthDateEditText)
-        genderRadioGroup = findViewById(R.id.genderRadioGroup)
-        registerButton = findViewById(R.id.registerButton)
-        avatarImage = findViewById(R.id.avatarImage)
-        selectAvatarButton = findViewById(R.id.selectAvatarButton)
-        avatarImage.setImageResource(selectedAvatarResId)
+        //loginEditText = findViewById(R.id.loginEditText)
+        //passwordEditText = findViewById(R.id.passwordEditText)
+        //surnameEditText = findViewById(R.id.SurnameEditText)      // Обрати внимание на большую S
+        //nameEditText = findViewById(R.id.NameEditText)            // Обрати внимание на большую N
+        //patronymicEditText = findViewById(R.id.PatronymicEditText) // Обрати внимание на большую P
+        //birthDateEditText = findViewById(R.id.birthDateEditText)
+        //genderRadioGroup = findViewById(R.id.genderRadioGroup)
+        //registerButton = findViewById(R.id.registerButton)
+        //avatarImage = findViewById(R.id.avatarImage)
+        //selectAvatarButton = findViewById(R.id.selectAvatarButton)
+        binding.avatarImage.setImageResource(selectedAvatarResId)
 
 
         // Обработчик кнопки регистрации
-        registerButton.setOnClickListener {
+        binding.registerButton.setOnClickListener {
             registerUser()
         }
 
-        selectAvatarButton.setOnClickListener {
+        binding.selectAvatarButton.setOnClickListener {
             showAvatarSelectionDialog()
         }
 
-        avatarImage.setOnClickListener {
+        binding.avatarImage.setOnClickListener {
             showAvatarSelectionDialog()
         }
     }
@@ -124,7 +125,7 @@ class RegisterActivity : AppCompatActivity() {
                 scaleType = ImageView.ScaleType.CENTER_CROP
                 setOnClickListener {
                     selectedAvatarResId = avatarResId
-                    avatarImage.setImageResource(selectedAvatarResId)
+                    binding.avatarImage.setImageResource(selectedAvatarResId)
                     Toast.makeText(this@RegisterActivity, "Аватар выбран", Toast.LENGTH_SHORT).show()
                     dialog.dismiss()
                 }
@@ -140,15 +141,15 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun registerUser() {
         // Получаем данные из полей
-        val login = loginEditText.text.toString().trim()
-        val password = passwordEditText.text.toString().trim()
-        val lastName = surnameEditText.text.toString().trim()     // Фамилия = Surname
-        val firstName = nameEditText.text.toString().trim()       // Имя = Name
-        val middleName = patronymicEditText.text.toString().trim() // Отчество = Patronymic
-        val birthDate = birthDateEditText.text.toString().trim()
+        val login = binding.loginEditText.text.toString().trim()
+        val password = binding.passwordEditText.text.toString().trim()
+        val lastName = binding.SurnameEditText.text.toString().trim()     // Фамилия = Surname
+        val firstName = binding.NameEditText.text.toString().trim()       // Имя = Name
+        val middleName = binding.PatronymicEditText.text.toString().trim() // Отчество = Patronymic
+        val birthDate = binding.birthDateEditText.text.toString().trim()
 
         // Получаем выбранный пол
-        val selectedGenderId = genderRadioGroup.checkedRadioButtonId
+        val selectedGenderId = binding.genderRadioGroup.checkedRadioButtonId
         if (selectedGenderId == -1) {
             Toast.makeText(this, "Выберите пол", Toast.LENGTH_SHORT).show()
             return
@@ -163,29 +164,41 @@ class RegisterActivity : AppCompatActivity() {
             return
         }
 
-        // Проверяем, не занят ли логин
-        if (database.isLoginExists(login)) {
-            Toast.makeText(this, "Пользователь с таким логином уже существует", Toast.LENGTH_SHORT).show()
-            return
-        }
+        Thread {
+            // Проверяем, не занят ли логин
+            val loginExists = database.isLoginExists(login)
 
-        // Регистрируем пользователя
-        val success = database.registerUser(
-            login = login,
-            password = password,
-            lastName = lastName,
-            firstName = firstName,
-            middleName = if (middleName.isEmpty()) null else middleName,
-            birthDate = birthDate,
-            gender = gender,
-            avatarPath = null // Пока без аватара
-        )
+            runOnUiThread {
+                if (loginExists) {
+                    Toast.makeText(this, "Пользователь с таким логином уже существует", Toast.LENGTH_SHORT).show()
+                    return@runOnUiThread
+                }
 
-        if (success) {
-            Toast.makeText(this, "Регистрация успешна!", Toast.LENGTH_SHORT).show()
-            finish() // Закрываем окно регистрации
-        } else {
-            Toast.makeText(this, "Ошибка регистрации", Toast.LENGTH_SHORT).show()
-        }
+                // ⬇⬇⬇ РЕГИСТРАЦИЯ В ОТДЕЛЬНОМ ПОТОКЕ ⬇⬇⬇
+                Thread {
+                    // Регистрируем пользователя
+                    val success = database.registerUser(
+                        login = login,
+                        password = password,
+                        lastName = lastName,
+                        firstName = firstName,
+                        middleName = if (middleName.isEmpty()) null else middleName,
+                        birthDate = birthDate,
+                        gender = gender,
+                        avatarPath = "avatar_res_$selectedAvatarResId"  // ← Теперь сохраняем выбранный аватар
+                    )
+
+                    runOnUiThread {
+                        if (success) {
+                            Toast.makeText(this, "Регистрация успешна!", Toast.LENGTH_SHORT).show()
+                            finish() // Закрываем окно регистрации
+                        } else {
+                            Toast.makeText(this, "Ошибка регистрации", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }.start()
+                // ⬆⬆⬆ РЕГИСТРАЦИЯ В ОТДЕЛЬНОМ ПОТОКЕ ⬆⬆⬆
+            }
+        }.start()
     }
 }

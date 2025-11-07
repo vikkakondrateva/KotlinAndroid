@@ -1,11 +1,9 @@
 package com.example.lab3android
 
 import android.app.Activity
-import android.app.AlertDialog
-import android.content.Intent
+import android.app.AlertDialog      // Класс для создания диалоговых окон
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -14,21 +12,22 @@ import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.lab3android.databinding.ActivityProfileBinding
 
 class ProfileActivity : AppCompatActivity() {
+    //private lateinit var loginEditText: EditText
+    //private lateinit var passwordEditText: EditText
+    //private lateinit var surnameEditText: EditText
+    //private lateinit var nameEditText: EditText
+    //private lateinit var patronymicEditText: EditText
+    //private lateinit var birthDateEditText: EditText
+    //private lateinit var genderRadioGroup: RadioGroup
+    //private lateinit var registerButton: Button
+    //private lateinit var selectAvatarButton: Button
+    //private lateinit var avatarImage: ImageView
+    //private lateinit var makeAdminButton: Button
 
-    private lateinit var loginEditText: EditText
-    private lateinit var passwordEditText: EditText
-    private lateinit var surnameEditText: EditText
-    private lateinit var nameEditText: EditText
-    private lateinit var patronymicEditText: EditText
-    private lateinit var birthDateEditText: EditText
-    private lateinit var genderRadioGroup: RadioGroup
-    private lateinit var registerButton: Button
-    private lateinit var selectAvatarButton: Button
-    private lateinit var avatarImage: ImageView
-    private lateinit var makeAdminButton: Button
-
+    private lateinit var binding: ActivityProfileBinding
     private var selectedAvatarResId: Int = R.drawable.avatar_default
     private val availableAvatars = listOf(
         R.drawable.avatar1,
@@ -40,135 +39,135 @@ class ProfileActivity : AppCompatActivity() {
     )
 
     private lateinit var database: Database
-    private var currentUserId: Long = 0
-    private var isEditMode: Boolean = false
-    private var originalLogin: String = ""
+    private var currentUserId: Long = 0     // ID текущего пользователя (0 для нового)
+    private var originalLogin: String = ""  // Оригинальный логин (для проверки изменений)
     private var pendingIsAdmin: Boolean = false // Временное хранение статуса админа
 
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeUtils.applySavedTheme(this)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_profile)
+        binding = ActivityProfileBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        //setContentView(R.layout.activity_profile)
         Log.d("Lifecycle", "ProfileActivity - onCreate")
 
         database = Database(this)
-        initializeViews()
+        initializeViews()                    // Инициализация View элементов
 
-        // Восстанавливаем сохраненные данные если есть
+        // Восстанавливаем сохраненные данные если есть (при повороте экрана)
         if (savedInstanceState != null) {
             restoreSavedData(savedInstanceState)
         } else {
-            setupUserData()
+            setupUserData()                 // Иначе загружаем данные пользователя из Intent
         }
 
         setupClickListeners()
     }
 
     private fun initializeViews() {
-        loginEditText = findViewById(R.id.loginEditText)
-        passwordEditText = findViewById(R.id.passwordEditText)
-        surnameEditText = findViewById(R.id.SurnameEditText)
-        nameEditText = findViewById(R.id.NameEditText)
-        patronymicEditText = findViewById(R.id.PatronymicEditText)
-        birthDateEditText = findViewById(R.id.birthDateEditText)
-        genderRadioGroup = findViewById(R.id.genderRadioGroup)
-        registerButton = findViewById(R.id.registerButton)
-        selectAvatarButton = findViewById(R.id.selectAvatarButton)
-        avatarImage = findViewById(R.id.avatarImage)
-        makeAdminButton = findViewById(R.id.makeAdminButton)
-
-        avatarImage = findViewById(R.id.avatarImage)
-        selectAvatarButton = findViewById(R.id.selectAvatarButton)
-        avatarImage.setImageResource(selectedAvatarResId)
+        //loginEditText = findViewById(R.id.loginEditText)
+        //passwordEditText = findViewById(R.id.passwordEditText)
+        //surnameEditText = findViewById(R.id.SurnameEditText)
+        //nameEditText = findViewById(R.id.NameEditText)
+        //patronymicEditText = findViewById(R.id.PatronymicEditText)
+        //birthDateEditText = findViewById(R.id.birthDateEditText)
+        //genderRadioGroup = findViewById(R.id.genderRadioGroup)
+        //registerButton = findViewById(R.id.registerButton)
+        //selectAvatarButton = findViewById(R.id.selectAvatarButton)
+        //avatarImage = findViewById(R.id.avatarImage)
+        //makeAdminButton = findViewById(R.id.makeAdminButton)
+        // Устанавливаем аватар по умолчанию
+        binding.avatarImage.setImageResource(selectedAvatarResId)
 
     }
 
+    // Метод для настройки данных пользователя
     private fun setupUserData() {
-        // Получаем данные из Intent (если переходим из списка пользователей)
-        val intent = intent
-        if (intent.hasExtra("user_id")) {
-            isEditMode = true
-            currentUserId = intent.getLongExtra("user_id", 0)
-            val user = database.getUserById(currentUserId)
-
-            user?.let {
-                fillUserData(it)
-                registerButton.text = "Сохранить изменения"
-                makeAdminButton.visibility = android.view.View.VISIBLE
-                pendingIsAdmin = user.isAdmin // Инициализируем временное значение
-            } ?: run {
-                Toast.makeText(this, "Пользователь не найден", Toast.LENGTH_SHORT).show()
-                finish()
-            }
-        } else {
-            // Режим создания нового пользователя
-            registerButton.text = "Зарегистрировать"
-            makeAdminButton.visibility = android.view.View.GONE
-            pendingIsAdmin = false // Новые пользователи по умолчанию не админы
+        // ProfileActivity всегда ожидает user_id для редактирования
+        if (!intent.hasExtra("user_id")) {
+            Toast.makeText(this, "Ошибка: не передан ID пользователя", Toast.LENGTH_SHORT).show()
+            finish()
+            return
         }
+
+        currentUserId = intent.getLongExtra("user_id", 0)       // Получает значение, которое было передано в эту Activity через Intent
+
+        Thread {
+            val user = database.getUserById(currentUserId)
+            runOnUiThread {
+                user?.let {
+                    fillUserData(it)
+                    if (!intent.hasExtra("is_admin")) {
+                        binding.makeAdminButton.visibility = android.view.View.VISIBLE
+                    }
+                    pendingIsAdmin = user.isAdmin
+                } ?: run {
+                    Toast.makeText(this, "Пользователь не найден", Toast.LENGTH_SHORT).show()
+                    finish()
+                }
+            }
+        }.start()
     }
 
+    // Метод для заполнения формы данными пользователя
     private fun fillUserData(user: User) {
-        loginEditText.setText(user.login)
-        passwordEditText.setText(user.password)
-        surnameEditText.setText(user.lastName)
-        nameEditText.setText(user.firstName)
-        patronymicEditText.setText(user.middleName ?: "")
-        birthDateEditText.setText(user.birthDate)
+        binding.loginEditText.setText(user.login)           // Заполняем поля данными из объекта User
+        binding.passwordEditText.setText(user.password)
+        binding.SurnameEditText.setText(user.lastName)
+        binding.NameEditText.setText(user.firstName)
+        binding.PatronymicEditText.setText(user.middleName ?: "")
+        binding.birthDateEditText.setText(user.birthDate)
 
-        // Устанавливаем пол - ВАЖНО!
+        // Устанавливаем пол
         when (user.gender) {
-            "М" -> {
-                val maleRadio = findViewById<RadioButton>(R.id.maleRadioButton)
-                maleRadio.isChecked = true
+            "М" -> { binding.maleRadioButton.isChecked = true
+                //val maleRadio = findViewById<RadioButton>(R.id.maleRadioButton)
+                //maleRadio.isChecked = true
             }
             "Ж" -> {
-                val femaleRadio = findViewById<RadioButton>(R.id.femaleRadioButton)
-                femaleRadio.isChecked = true
+                //val femaleRadio = findViewById<RadioButton>(R.id.femaleRadioButton)
+                //femaleRadio.isChecked = true
             }
-            else -> {
+            else -> { binding.femaleRadioButton.isChecked = true
                 // Если пол не установлен, сбрасываем выбор
-                genderRadioGroup.clearCheck()
+                binding.genderRadioGroup.clearCheck()
             }
         }
 
         // Устанавливаем аватар
         if (user.avatarPath != null && user.avatarPath.startsWith("avatar_res_")) {
             try {
+                // Извлекаем ID ресурса из строки (формат: "avatar_res_123456")
                 val resId = user.avatarPath.removePrefix("avatar_res_").toInt()
                 selectedAvatarResId = resId
-                avatarImage.setImageResource(selectedAvatarResId)
+                binding.avatarImage.setImageResource(selectedAvatarResId)       // Устанавливаем изображение аватара
             } catch (e: Exception) {
                 // Если ошибка - оставляем аватар по умолчанию
             }
         }
 
-        originalLogin = user.login
-        pendingIsAdmin = user.isAdmin
+        originalLogin = user.login       // Сохраняем оригинальный логин для проверки изменений
+        pendingIsAdmin = user.isAdmin     // Сохраняем текущий статус администратора
 
         // Настраиваем кнопку "Сделать администратором"
         updateAdminButtonText()
     }
 
     private fun setupClickListeners() {
-        selectAvatarButton.setOnClickListener {
+        binding.selectAvatarButton.setOnClickListener {
             showAvatarSelectionDialog()
         }
 
-        avatarImage.setOnClickListener {
+        binding.avatarImage.setOnClickListener {
             showAvatarSelectionDialog()
         }
 
-        registerButton.setOnClickListener {
-            if (isEditMode) {
+        binding.registerButton.setOnClickListener {
                 updateUser()
-            } else {
-                registerNewUser()
-            }
         }
 
-        makeAdminButton.setOnClickListener {
-            // Только меняем текст кнопки, НЕ сохраняем в БД
+        binding.makeAdminButton.setOnClickListener {
+            // Только меняем текст кнопки, не сохраняем в БД
             pendingIsAdmin = !pendingIsAdmin
             updateAdminButtonText()
             Toast.makeText(this,
@@ -180,21 +179,22 @@ class ProfileActivity : AppCompatActivity() {
 
     private fun updateAdminButtonText() {
         if (pendingIsAdmin) {
-            makeAdminButton.text = "Убрать права администратора"
+            binding.makeAdminButton.text = "Убрать права администратора"
         } else {
-            makeAdminButton.text = "Сделать администратором"
+            binding.makeAdminButton.text = "Сделать администратором"
         }
     }
 
+    // Метод для показа диалога выбора аватара
     private fun showAvatarSelectionDialog() {
         val dialog = AlertDialog.Builder(this)
             .setTitle("Выберите аватар")
             .setNegativeButton("Отмена") { dialogInterface, _ ->
                 dialogInterface.dismiss()
             }
-            .create()
+            .create()               // Создаем диалог
 
-        val container = LinearLayout(this).apply {
+        val container = LinearLayout(this).apply {      // Создаем контейнер для аватаров
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
@@ -203,143 +203,127 @@ class ProfileActivity : AppCompatActivity() {
             setPadding(16, 16, 16, 16)
         }
 
+        // Создаем строки для сетки аватаров (3 в строке)
         val rows = mutableListOf<LinearLayout>()
         val numberOfRows = (availableAvatars.size + 2) / 3
 
+        // Создаем нужное количество строк
         for (i in 0 until numberOfRows) {
             val row = LinearLayout(this).apply {
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 )
-                orientation = LinearLayout.HORIZONTAL
+                orientation = LinearLayout.HORIZONTAL       // Горизонтальное расположение в строке
                 gravity = android.view.Gravity.CENTER
             }
-            rows.add(row)
-            container.addView(row)
+            rows.add(row)                                   // Добавляем строку в список
+            container.addView(row)                   // Добавляем строку в контейнер
         }
 
+        // Добавляем аватары в строки
         availableAvatars.forEachIndexed { index, avatarResId ->
-            val rowIndex = index / 3
-            val row = rows[rowIndex]
+            val rowIndex = index / 3                        // Определяем номер строки
+            val row = rows[rowIndex]                        // Получаем соответствующую строку
 
-            val avatarOption = ImageView(this).apply {
-                setImageResource(avatarResId)
+            val avatarOption = ImageView(this).apply {   // Создаем ImageView для аватара
+                setImageResource(avatarResId)                // Устанавливаем изображение аватара
                 layoutParams = LinearLayout.LayoutParams(120, 120).apply {
-                    setMargins(16, 16, 16, 16)
+                    setMargins(16, 16, 16, 16)   // Отступы вокруг аватара
                 }
                 scaleType = ImageView.ScaleType.CENTER_CROP
-                setOnClickListener {
+                setOnClickListener {        // При клике на аватар выбираем его
                     selectedAvatarResId = avatarResId
-                    avatarImage.setImageResource(selectedAvatarResId)
+                    binding.avatarImage.setImageResource(selectedAvatarResId)   // Обновляем основной аватар
                     Toast.makeText(this@ProfileActivity, "Аватар выбран", Toast.LENGTH_SHORT).show()
-                    dialog.dismiss()
+                    dialog.dismiss()        // Закрываем диалог
                 }
-                setBackgroundResource(android.R.drawable.btn_default)
+                setBackgroundResource(android.R.drawable.btn_default)   // Фон кнопки
             }
 
-            row.addView(avatarOption)
+            row.addView(avatarOption)       // Добавляем аватар в строку
         }
 
-        dialog.setView(container)
-        dialog.show()
+        dialog.setView(container)                   // Устанавливаем контейнер в диалог
+        dialog.show()                               // Показываем диалог
     }
 
-    private fun registerNewUser() {
-        val userData = getUserDataFromForm()
-        if (userData == null) {
-            Toast.makeText(this, "Заполните все обязательные поля", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val (login, password, lastName, firstName, middleName, birthDate, gender) = userData
-        val avatarPath = "avatar_res_$selectedAvatarResId"
-
-        // Проверяем, не занят ли логин
-        if (database.isLoginExists(login)) {
-            Toast.makeText(this, "Пользователь с таким логином уже существует", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val success = database.registerUser(
-            login = login,
-            password = password,
-            lastName = lastName,
-            firstName = firstName,
-            middleName = middleName,
-            birthDate = birthDate,
-            gender = gender,
-            avatarPath = avatarPath
-        )
-
-        if (success) {
-            Toast.makeText(this, "Пользователь зарегистрирован!", Toast.LENGTH_SHORT).show()
-            finish()
-        } else {
-            Toast.makeText(this, "Ошибка регистрации", Toast.LENGTH_SHORT).show()
-        }
-    }
-
+    // Метод для обновления данных пользователя
     private fun updateUser() {
-        val userData = getUserDataFromForm()
+        val userData = getUserDataFromForm()        // Получаем данные из формы
         if (userData == null) {
             Toast.makeText(this, "Заполните все обязательные поля", Toast.LENGTH_SHORT).show()
             return
         }
 
-        val (login, password, lastName, firstName, middleName, birthDate, gender) = userData
+        val (login, password, lastName, firstName, middleName, birthDate, gender) = userData        // Деструктурируем данные из формы
         val avatarPath = "avatar_res_$selectedAvatarResId"
 
         // Проверяем, не занят ли логин другим пользователем
-        if (login != originalLogin && database.isLoginExists(login)) {
-            Toast.makeText(this, "Пользователь с таким логином уже существует", Toast.LENGTH_SHORT).show()
-            return
-        }
+        Thread {
+            val loginExists = if (login != originalLogin) database.isLoginExists(login) else false
 
-        val success = database.updateUser(
-            userId = currentUserId,
-            login = login,
-            password = password,
-            lastName = lastName,
-            firstName = firstName,
-            middleName = middleName,
-            birthDate = birthDate,
-            gender = gender,
-            avatarPath = avatarPath,
-            isAdmin = pendingIsAdmin // Используем временное значение
-        )
+            runOnUiThread {
+                if (loginExists) {
+                    Toast.makeText(this, "Пользователь с таким логином уже существует", Toast.LENGTH_SHORT).show()
+                    return@runOnUiThread
+                }
 
-        if (success) {
-            Toast.makeText(this, "Данные пользователя обновлены!", Toast.LENGTH_SHORT).show()
-            setResult(Activity.RESULT_OK)
-            finish()
-        } else {
-            Toast.makeText(this, "Ошибка обновления данных", Toast.LENGTH_SHORT).show()
-        }
+                Thread {
+                    val success = database.updateUser(
+                        userId = currentUserId,
+                        login = login,
+                        password = password,
+                        lastName = lastName,
+                        firstName = firstName,
+                        middleName = middleName,
+                        birthDate = birthDate,
+                        gender = gender,
+                        avatarPath = avatarPath,
+                        isAdmin = pendingIsAdmin
+                    )
+
+                    runOnUiThread {
+                        if (success) {
+                            Toast.makeText(this, "Данные пользователя обновлены!", Toast.LENGTH_SHORT).show()
+                            setResult(Activity.RESULT_OK)
+                            finish()
+                        } else {
+                            Toast.makeText(this, "Ошибка обновления данных", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }.start()
+            }
+        }.start()
     }
 
-    private fun getUserDataFromForm(): UserFormData? {
-        val login = loginEditText.text.toString().trim()
-        val password = passwordEditText.text.toString().trim()
-        val lastName = surnameEditText.text.toString().trim()
-        val firstName = nameEditText.text.toString().trim()
-        val middleName = patronymicEditText.text.toString().trim()
-        val birthDate = birthDateEditText.text.toString().trim()
+    // Метод для получения данных из формы
+    private fun getUserDataFromForm(): UserFormData? {   // Получаем и очищаем данные из полей ввода
+        val login = binding.loginEditText.text.toString().trim()
+        val password = binding.passwordEditText.text.toString().trim()
+        val lastName = binding.SurnameEditText.text.toString().trim()
+        val firstName = binding.NameEditText.text.toString().trim()
+        val middleName = binding.PatronymicEditText.text.toString().trim()
+        val birthDate = binding.birthDateEditText.text.toString().trim()
 
-        val selectedGenderId = genderRadioGroup.checkedRadioButtonId
+        // Проверяем выбран ли пол
+        val selectedGenderId = binding.genderRadioGroup.checkedRadioButtonId
         if (selectedGenderId == -1) {
             Toast.makeText(this, "Выберите пол", Toast.LENGTH_SHORT).show()
             return null
         }
+        // Получаем текст выбранной радиокнопки
         val genderRadioButton = findViewById<RadioButton>(selectedGenderId)
         val gender = genderRadioButton.text.toString()
 
+        // Проверяем обязательные поля
         if (login.isEmpty() || password.isEmpty() || lastName.isEmpty() ||
             firstName.isEmpty() || birthDate.isEmpty()) {
             Toast.makeText(this, "Заполните все обязательные поля", Toast.LENGTH_SHORT).show()
             return null
         }
 
+        // Возвращаем данные в виде объекта UserFormData
         return UserFormData(login, password, lastName, firstName, middleName, birthDate, gender)
     }
 
@@ -354,24 +338,26 @@ class ProfileActivity : AppCompatActivity() {
         val gender: String
     )
 
+    // Метод для восстановления сохраненных данных (при повороте экрана)
     private fun restoreSavedData(savedInstanceState: Bundle) {
-        savedInstanceState.getString("login")?.let { loginEditText.setText(it) }
-        savedInstanceState.getString("password")?.let { passwordEditText.setText(it) }
-        savedInstanceState.getString("surname")?.let { surnameEditText.setText(it) }
-        savedInstanceState.getString("name")?.let { nameEditText.setText(it) }
-        savedInstanceState.getString("patronymic")?.let { patronymicEditText.setText(it) }
-        savedInstanceState.getString("birthDate")?.let { birthDateEditText.setText(it) }
+        savedInstanceState.getString("login")?.let { binding.loginEditText.setText(it) }
+        savedInstanceState.getString("password")?.let { binding.passwordEditText.setText(it) }
+        savedInstanceState.getString("surname")?.let { binding.SurnameEditText.setText(it) }
+        savedInstanceState.getString("name")?.let { binding.NameEditText.setText(it) }
+        savedInstanceState.getString("patronymic")?.let { binding.PatronymicEditText.setText(it) }
+        savedInstanceState.getString("birthDate")?.let { binding.birthDateEditText.setText(it) }
 
         // Восстанавливаем выбранный пол
         val savedGenderId = savedInstanceState.getInt("gender", -1)
         if (savedGenderId != -1) {
-            genderRadioGroup.check(savedGenderId)
+            binding.genderRadioGroup.check(savedGenderId)
         }
 
+        // Восстанавливаем выбранный аватар
         val savedAvatarResId = savedInstanceState.getInt("avatarResId", -1)
         if (savedAvatarResId != -1) {
             selectedAvatarResId = savedAvatarResId
-            avatarImage.setImageResource(selectedAvatarResId)
+            binding.avatarImage.setImageResource(selectedAvatarResId)
         }
 
         // Восстанавливаем временный статус админа
@@ -381,16 +367,18 @@ class ProfileActivity : AppCompatActivity() {
         Log.d("ProfileActivity", "Данные восстановлены")
     }
 
+    // Метод для сохранения состояния активности
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
-        outState.putString("login", loginEditText.text.toString())
-        outState.putString("password", passwordEditText.text.toString())
-        outState.putString("surname", surnameEditText.text.toString())
-        outState.putString("name", nameEditText.text.toString())
-        outState.putString("patronymic", patronymicEditText.text.toString())
-        outState.putString("birthDate", birthDateEditText.text.toString())
-        outState.putInt("gender", genderRadioGroup.checkedRadioButtonId)
+        // Сохраняем текстовые поля в Bundle
+        outState.putString("login", binding.loginEditText.text.toString())
+        outState.putString("password", binding.passwordEditText.text.toString())
+        outState.putString("surname", binding.SurnameEditText.text.toString())
+        outState.putString("name", binding.NameEditText.text.toString())
+        outState.putString("patronymic", binding.PatronymicEditText.text.toString())
+        outState.putString("birthDate", binding.birthDateEditText.text.toString())
+        outState.putInt("gender", binding.genderRadioGroup.checkedRadioButtonId)
         outState.putInt("avatarResId", selectedAvatarResId)
         outState.putBoolean("pendingIsAdmin", pendingIsAdmin) // Сохраняем временный статус
 
