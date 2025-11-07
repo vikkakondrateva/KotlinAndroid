@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@color/backgroundColor">
+
+    <!-- Заголовок -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Крестики-Нолики"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/textColor"
+        android:gravity="center"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="36dp"/>
+
+    <!-- Статус игры -->
+    <TextView
+        android:id="@+id/statusText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ход игрока: 1"
+        android:textSize="18sp"
+        android:textColor="@color/textColor"
+        android:gravity="center"
+        android:layout_marginBottom="24dp" />
+
+    <!-- Игровое поле 3x3 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/button00"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:background="@color/buttonColor"
+                android:scaleType="centerInside"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <ImageView
+                android:id="@+id/button01"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:background="@color/buttonColor"
+                android:scaleType="centerInside"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_marginStart="8dp" />
+
+            <ImageView
+                android:id="@+id/button02"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:background="@color/buttonColor"
+                android:scaleType="centerInside"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_marginStart="8dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+
+            <ImageView
+                android:id="@+id/button10"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:background="@color/buttonColor"
+                android:scaleType="centerInside"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <ImageView
+                android:id="@+id/button11"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:background="@color/buttonColor"
+                android:scaleType="centerInside"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_marginStart="8dp" />
+
+            <ImageView
+                android:id="@+id/button12"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:background="@color/buttonColor"
+                android:scaleType="centerInside"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_marginStart="8dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+
+            <ImageView
+                android:id="@+id/button20"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:background="@color/buttonColor"
+                android:scaleType="centerInside"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <ImageView
+                android:id="@+id/button21"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:background="@color/buttonColor"
+                android:scaleType="centerInside"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_marginStart="8dp" />
+
+            <ImageView
+                android:id="@+id/button22"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:background="@color/buttonColor"
+                android:scaleType="centerInside"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_marginStart="8dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Кнопки управления -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="24dp">
+
+        <Button
+            android:id="@+id/restartButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Новая игра"
+            android:textSize="16sp"
+            android:background="@color/buttonColor"
+            android:textColor="@color/textColor" />
+
+        <Button
+            android:id="@+id/backButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Назад"
+            android:textSize="16sp"
+            android:background="@color/buttonColor"
+            android:textColor="@color/textColor"
+            android:layout_marginStart="16dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -174,7 +174,6 @@ class RegisterActivity : AppCompatActivity() {
                     return@runOnUiThread
                 }
 
-                // ⬇⬇⬇ РЕГИСТРАЦИЯ В ОТДЕЛЬНОМ ПОТОКЕ ⬇⬇⬇
                 Thread {
                     // Регистрируем пользователя
                     val success = database.registerUser(
@@ -197,7 +196,6 @@ class RegisterActivity : AppCompatActivity() {
                         }
                     }
                 }.start()
-                // ⬆⬆⬆ РЕГИСТРАЦИЯ В ОТДЕЛЬНОМ ПОТОКЕ ⬆⬆⬆
             }
         }.start()
     }

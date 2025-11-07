@@ -62,6 +62,8 @@ class MenuActivity : AppCompatActivity() {
         // Старт (лог)
         binding.startButton.setOnClickListener {
             Log.d("Menu", "Кнопка Старт нажата")
+            val intent = Intent(this, PlayActivity::class.java)
+            startActivity(intent)
         }
 
         // Профиль - ProfileActivity
@@ -75,7 +77,6 @@ class MenuActivity : AppCompatActivity() {
                     // Находим пользователя по логину чтобы получить его ID
                     val currentUser = database.getUserByLogin(userLogin)
 
-                    // ⬇⬇⬇ ОБНОВЛЕНИЕ UI В ГЛАВНОМ ПОТОКЕ ⬇⬇⬇
                     runOnUiThread {
                         val profileIntent = Intent(this, ProfileActivity::class.java)
                         if (currentUser != null) {
@@ -88,7 +89,7 @@ class MenuActivity : AppCompatActivity() {
                             Toast.makeText(this, "Ошибка: не найден пользователь в БД", Toast.LENGTH_SHORT).show()
                         }
                     }
-                    // ⬆⬆⬆ ОБНОВЛЕНИЕ UI В ГЛАВНОМ ПОТОКЕ ⬆⬆⬆
+
                 }.start()
             } else {
                 Toast.makeText(this, "Ошибка: не найден текущий пользователь", Toast.LENGTH_SHORT).show()

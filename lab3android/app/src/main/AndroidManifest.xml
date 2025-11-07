@@ -41,6 +41,11 @@
             android:name=".AdminActivity"
             android:exported="false" />
 
+        <!-- Администрирование -->
+        <activity
+            android:name=".PlayActivity"
+            android:exported="false" />
+
         <activity
             android:name=".RegisterActivity"
             android:exported="false" />
